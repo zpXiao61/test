@@ -1,0 +1,248 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>SAIL &mdash; SophonInference  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="SAIL C++ API" href="sail_cpp.html" />
+    <link rel="prev" title="常用工具介绍" href="../quickstart/tools.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> SophonInference
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart/abstract.html">图解 Sophon Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart/install.html">Sophon Inference 安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart/tools.html">常用工具介绍</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SAIL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sail_cpp.html">SAIL C++ API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sail_python.html">SAIL Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="autosplit.html">AutoSplit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="autorunner.html">AutoRunner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algokit.html">Algokit</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../demo/release_cpp.html">C++ Samples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../demo/release_python.html">Python Samples</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SophonInference</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>SAIL</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/module/sail.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="sail">
+<h1>SAIL<a class="headerlink" href="#sail" title="Permalink to this headline">¶</a></h1>
+<p>SAIL 是 Sophon Inference 中的支撑模块，
+AutoDeploy、Algokit 以及 Samples 中的大部分代码都建立在 SAIL 的基础上。</p>
+<p>SAIL 对 BMNNSDK 中的 BMRuntime、BMDNN、BMCV、BMLib 进行了封装，
+将 BMNNSDK 中原有的 “加载 bmodel 并驱动 TPU 推理”、
+“驱动 TPU 做图像处理”、“驱动 VPU 做图像和视频解码”
+等功能抽象成更为简单的 C++ 接口对外提供；
+并且支持使用 pybind11 再次封装，提供简洁的 python 接口。</p>
+<p>目前，SAIL 模块中所有的类、枚举、函数都在 “sail” 名字空间下，
+本单元中的文档将深入介绍您可能用到的 SAIL 中的模块和类。
+核心的类包括：</p>
+<ul class="simple">
+<li>Handle：</li>
+</ul>
+<p>BMNNSDK 中 BMLib 的 bm_handle_t 的包装类，设备句柄，上下文信息，用来和内核驱动交互信息。</p>
+<ul class="simple">
+<li>Tensor：</li>
+</ul>
+<p>BMNNSDK 中 BMLib 的包装类，封装了对 device memroy 的管理以及与 system memory 的同步。</p>
+<ul class="simple">
+<li>Engine：</li>
+</ul>
+<p>BMNNSDK 中 BMRuntime 的包装类，可以加载 bmodel 并驱动 TPU 进行推理。
+一个 Engine 实例可以加载一个任意的 bmodel，
+自动地管理输入张量与输出张量对应的内存。</p>
+<ul class="simple">
+<li>Bmcv：</li>
+</ul>
+<p>BMNNSDK 中 BMCV 的包装类，封装了一系列的图像处理函数，可以驱动 TPU 进行图像处理。</p>
+<ul class="simple">
+<li>Bmdnn：</li>
+</ul>
+<p>BMNNSDK 中 BMDNN 的包装类，提供 layer/operator 级别的计算接口。</p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="sail_cpp.html" class="btn btn-neutral float-right" title="SAIL C++ API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../quickstart/tools.html" class="btn btn-neutral float-left" title="常用工具介绍" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Sophon
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

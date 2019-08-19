@@ -1,0 +1,847 @@
+SAIL C++ API
+============
+
+Handle
+_____
+
+**1). Handle 构造函数**
+    .. code-block:: c++
+
+        @brief Constructor using existed bm_handle_t.
+
+        @param handle A bm_handle_t
+
+        Handle(bm_handle_t handle);
+
+**2). Handle 构造函数**
+    .. code-block:: c++
+
+        @brief Constructor with device id.
+
+        @param dev_id Device id
+
+        Handle(int dev_id);
+
+**3). get_ptr**
+    .. code-block:: c++
+
+        @brief Get inner bm_handle_t.
+
+        @return Inner bm_handle_t
+
+        bm_handle_t get_ptr();
+
+**4). get_ptr**
+    .. code-block:: c++
+
+        @brief Free inner bm_handle_t.
+
+        void free_ptr();
+
+Tensor
+_____
+
+**1). Tensor 构造函数**
+    .. code-block:: c++
+
+        @brief Constructor only allocates system memory of the tensor.
+
+        @param shape Shape of the tensor
+
+        Tensor(const std::vector<int>& shape);
+
+**2). Tensor 构造函数**
+    .. code-block:: c++
+
+        @brief Constructor allocates system memory and device memory of the tensor.
+
+        @param handle   Handle instance
+        @param shape    Shape of the tensor
+
+        Tensor(
+            Handle                  handle,
+            const std::vector<int>& shape);
+
+**3). Tensor 构造函数**
+    .. code-block:: c++
+
+        @brief Constructor only allocates device memory of the tensor.
+
+        @param handle   Handle instance
+        @param shape    Shape of the tensor
+        @param bytes    Bytes of data
+
+        Tensor(
+          Handle                  handle,
+          const std::vector<int>& shape,
+          int                     bytes);
+
+**4). Tensor 构造函数**
+    .. code-block:: c++
+
+        @brief Constructor wrapper existied device memory.
+
+        @param handle   Handle instance
+        @param shape    Shape of the tensor
+        @param data     Pointer of device memory.
+
+        Tensor(
+            Handle                  handle,
+            const std::vector<int>& shape,
+            bm_device_mem_t*        data);
+
+**5). Tensor 构造函数**
+    .. code-block:: c++
+
+        @brief Common constructor.\n
+        @detail
+         case 0: only allocate system memory
+                 (NULL, shape, true, false, NULL, NULL) \n
+         case 1: only allocate device memory
+                 (p_handle, shape, false, true, NULL, NULL) \n
+         case 2: allocate system memory and device memory
+                 (p_handle, shape, true, true, NULL, NULL) \n
+         case 3: use outer data and dev_mem
+                 (p_handle, shape, false, false, data, dev_mem) \n
+
+        @param handle       Handle instance
+        @param shape        Shape of the tensor
+        @param own_sys_data Indicator of whether own the data pointer in system
+                            memory. Allocate and free the pointer if it is true
+        @param own_dev_data Indicator of whether own the device memory struct.
+                            Allocate and free the struct if it is true. The data
+                            in device memory will be Allocated and freed if not
+                            only allocate system memory for the tensor
+        @param data         Data pointer in system memory of the tensor. Set NULL
+                            if own_sys_data is false
+        @param dev_mem_     Pointer of device memory struct. Set NULL if
+                            own_dev_data is false
+
+        Tensor(
+            Handle                  handle,
+            const std::vector<int>& shape,
+            bool                    own_sys_data,
+            bool                    own_dev_data,
+            Dtype*                  data,
+            bm_device_mem_t*        dev_mem_);
+
+**6). Tensor 复制构造函数**
+    .. code-block:: c++
+
+        @brief Copy constructor.
+
+        @param tensor A Tensor instance
+
+        Tensor(const Tensor& tensor);
+
+**7). Tensor 赋值函数**
+    .. code-block:: c++
+
+        @brief Assignment function.
+
+        @param tensor A Tensor instance
+        @return A Tensor instance
+
+        Tensor& operator=(const Tensor& tensor);
+
+**8). shape**
+    .. code-block:: c++
+
+        @brief Get shape of the tensor.
+
+        @return Shape of the tensor
+
+        const std::vector<int>& shape() const;
+
+**9). reshape**
+    .. code-block:: c++
+
+        @brief Reset shape of the tensor.
+
+        @param shape Shape of the tensor
+
+        void reshape(const std::vector<int>& shape);
+
+**10). own_sys_data**
+    .. code-block:: c++
+
+        @brief Judge if the tensor owns data pointer in system memory.
+
+        @return True for owns data pointer in system memory.
+
+        bool own_sys_data();
+
+**11). own_dev_data**
+    .. code-block:: c++
+
+        @brief Judge if the tensor owns data pointer in device memory.
+
+        @return True for owns data pointer in device memory.
+
+        bool own_dev_data();
+
+**12). sys_data**
+    .. code-block:: c++
+
+        @brief Get data pointer in system memory of the tensor.
+
+        @return Data pointer in system memory of the tensor
+
+        Dtype* sys_data();
+
+**13). dev_data**
+    .. code-block:: c++
+
+        @brief Get pointer to device memory of the tensor.
+
+        @return Pointer to device memory of the tensor
+
+        bm_device_mem_t* dev_data();
+
+**14). reset_sys_data**
+    .. code-block:: c++
+
+        @brief Reset data pointer in system memory of the tensor.
+
+        @param data Data pointer in system memory of the tensor
+
+        void reset_sys_data(Dtype* data);
+
+**15). reset_dev_data**
+    .. code-block:: c++
+
+        @brief Reset pointer to device memory of the tensor.
+
+        @param data Pointer to device memory
+
+        void reset_dev_data(bm_device_mem_t* data);
+
+**16). sync_s2d**
+    .. code-block:: c++
+
+         @brief Copy data from system memory to device memory.
+
+         void sync_s2d();
+
+**17). sync_s2d**
+    .. code-block:: c++
+
+        @brief Copy data from system memory to device memory with specified size.
+
+        @param size Byte size to be copied
+
+        void sync_s2d(int size);
+
+**18). sync_d2s**
+    .. code-block:: c++
+
+         @brief Copy data from device memory to system memory.
+
+         void sync_d2s();
+
+**19). sync_d2s**
+    .. code-block:: c++
+
+        @brief Copy data from device memory to system memory with specified size.
+
+        @param size Byte size to be copied
+
+        void sync_d2s(int size);
+
+**20). copy_to**
+    .. code-block:: c++
+
+        @brief Copy data from this tensor to another.
+
+        @param dst Destination tensor to copy data to.
+
+        bool copy_to(Tensor& dst);
+
+**21). copy_from**
+    .. code-block:: c++
+
+        @brief Copy data from a source tensor to this one.
+
+        @param src Source tensor to copy data from.
+
+        bool copy_from(Tensor& src);
+
+
+IOMode
+______
+
+**1). IOMode**
+    .. code-block:: c++
+
+        enum IOMode {
+          /// Input tensors are in system memory while output tensors are
+          /// in device memory.
+          SYSI,
+          /// Input tensors are in device memory while output tensors are
+          /// in system memory.
+          SYSO,
+          /// Both input and output tensors are in system memory.
+          SYSIO,
+          /// Both input and output tensors are in device memory.
+          DEVIO
+        };
+
+Engine
+______
+
+**1). Engine 构造函数**
+    .. code-block:: c++
+
+        @brief Constructor using default input shapes.
+
+        @param context_dir Context directory path generated by BMCompiler
+        @param tpus        Ids of TPUS to be used, split by comma. Eg.: "0,1" for
+                           TPU 0 and TPU 1, "all" for all available TPUs
+        @param mode        Specify the input/output tensors are in system memory
+                           or device memory
+
+        Engine(
+            const std::string& context_dir,
+            const std::string& tpus,
+            IOMode             mode);
+
+**2). Engine 构造函数**
+    .. code-block:: c++
+
+        @brief Constructor which loads bmodel from system memory.
+
+        @param bmodel_ptr  Pointer to bmodel in system memory
+        @param bmodel_size Size of bmodel in system memory
+        @param tpus        Ids of TPUS to be used, split by comma. Eg.: "0,1" for
+                           TPU 0 and TPU 1, "all" for all available TPUs
+        @param mode        Specify the input/output tensors are in system memory
+                           or device memory
+
+        Engine(
+            const void*        bmodel_ptr,
+            size_t             bmodel_size,
+            const std::string& tpus,
+            IOMode             mode);
+
+**3). Engine 复制构造函数**
+    .. code-block:: c++
+
+        @brief Copy constructor.
+
+        @param other An other Engine instance.
+
+        Engine(const Engine& other);
+
+**4). Engine 复制构造函数**
+    .. code-block:: c++
+
+        @brief Assignment function.
+
+        @param other An other Engine instance.
+        @return Reference of a Engine instance.
+
+        Engine<Dtype>& operator=(const Engine& other);
+
+**5). get_graph_names**
+    .. code-block:: c++
+
+         @brief Get all graph names in the loaded context.
+
+         @return All graph names
+
+         std::vector<std::string> get_graph_names();
+
+**6). get_input_names**
+    .. code-block:: c++
+
+        @brief Get all input tensor names of the specified graph.
+
+        @param graph_name The specified graph name
+        @return All the input tensor names of the graph
+
+        std::vector<std::string> get_input_names(const std::string& graph_name);
+
+**7). get_output_names**
+    .. code-block:: c++
+
+        @brief Get all output tensor names of the specified graph.
+
+        @param graph_name The specified graph name
+        @return All the output tensor names of the graph
+
+        std::vector<std::string> get_output_names(const std::string& graph_name);
+
+**8). is_input_batch_size_equal**
+    .. code-block:: c++
+
+        @brief Judge if batch size of all input tensors are equal.
+
+        @param input_shapes All input tensor shapes
+        @batch_size         Batch size to return
+
+        @return True if batch size of all input tensors are equal
+
+        bool is_input_batch_size_equal(
+            std::map<std::string, std::vector<int>>& input_shapes,
+            int&                                     batch_size);
+
+**9). set_input_shape**
+    .. code-block:: c++
+
+        @brief Set input tensor shapes when running dynamic models with
+               synchronous mode.
+
+        The input tensor shapes may change between batches when running dynamic
+        models. New input shapes should be set before inference. Note that this
+        function is for synchronous mode.
+
+        @param graph_name   The specified graph name
+        @param input_shapes Specified shapes of all input tensors of the graph
+
+        void set_input_shape(
+            const std::string&                       graph_name,
+            std::map<std::string, std::vector<int>>& input_shapes);
+
+**10). get_handle**
+    .. code-block:: c++
+
+        @brief Get Handle instance.
+
+        @return Handle instance
+
+        Handle get_handle(int tpu_id);
+
+**11). get_max_input_shapes**
+    .. code-block:: c++
+
+        @brief Get max shapes of input tensors in a graph.
+
+        For static models, the max shape is the static shape and it should not be
+        changed. While for dynamic models, the tensor shape should be smaller than
+        or equal to the max shape.
+
+        @param graph_name The specified graph name
+        @param is_total   True for total specified tpus; False for a single one
+        @return The max shape of the tensor
+
+        std::map<std::string, std::vector<int>> get_max_input_shapes(
+            const std::string& graph_name,
+            bool               is_total);
+
+**12). get_input_shape**
+    .. code-block:: c++
+
+        @brief Get the shape of an input tensor in a graph.
+
+        @param graph_name  The specified graph name
+        @param tensor_name The specified tensor name
+        @return The shape of the tensor
+
+        std::vector<int> get_input_shape(
+            const std::string& graph_name,
+            const std::string& tensor_name);
+
+**13). get_output_shape**
+    .. code-block:: c++
+
+        @brief Get the shape of an output tensor in a graph.
+
+        @param graph_name  The specified graph name
+        @param tensor_name The specified tensor name
+        @return The shape of the tensor
+
+        std::vector<int> get_output_shape(
+            const std::string& graph_name,
+            const std::string& tensor_name);
+
+**14). get_input_tensor_sys**
+    .. code-block:: c++
+
+        @brief Get the data pointer in the system memory of the input tensor.
+
+        @param graph_name  The specified graph name
+        @param tensor_name The specified tensor name
+        @return The data pointer in the system memory of the input tensor
+
+        Dtype* get_input_tensor_sys(
+            const std::string& graph_name,
+            const std::string& tensor_name);
+
+**15). get_output_tensor_sys**
+    .. code-block:: c++
+
+        @brief Get the data pointer in the system memory of the output tensor.
+
+        @param graph_name  The specified graph name
+        @param tensor_name The specified tensor name
+        @return The data pointer in the system memory of the output tensor
+        @note It's static models or synchronous mode
+
+        Dtype* get_output_tensor_sys(
+            const std::string& graph_name,
+            const std::string& tensor_name);
+
+**16). get_input_tensor_dev_mem**
+    .. code-block:: c++
+
+        @brief Get the device memory of the input tensor with synchronous mode.
+
+        @param graph_name  The specified graph name
+        @param tensor_name The specified tensor name
+        @return The device memory of the input tensor
+
+        bm_device_mem_t* get_input_tensor_dev_mem(
+            const std::string& graph_name,
+            const std::string& tensor_name);
+
+**17). get_input_tensor_dev**
+    .. code-block:: c++
+
+        @brief Get the input tensor which only owns the device memory with
+               synchronous mode.
+
+        @param graph_name  The specified graph name
+        @param tensor_name The specified tensor name
+        @return A Tensor instance which only owns the device memory of the tensor.
+
+        Tensor<Dtype> get_input_tensor_dev(
+            const std::string& graph_name,
+            const std::string& tensor_name);
+
+**18). get_output_tensor_dev_mem**
+    .. code-block:: c++
+
+        @brief Get the device memory of the output tensor with synchronous mode.
+
+        @param graph_name  The specified graph name
+        @param tensor_name The specified tensor name
+        @return The device memory of the output tensor
+
+        bm_device_mem_t* get_output_tensor_dev_mem(
+            const std::string& graph_name,
+            const std::string& tensor_name);
+
+**19). get_output_tensor_dev**
+    .. code-block:: c++
+
+        @brief Get the output tensor which only owns the device memory with
+               synchronous mode.
+
+        @param graph_name  The specified graph name
+        @param tensor_name The specified tensor name
+        @return A Tensor instance which only owns the device memory of the tensor.
+
+        Tensor<Dtype> get_output_tensor_dev(
+            const std::string& graph_name,
+            const std::string& tensor_name);
+
+**20). process**
+    .. code-block:: c++
+
+        @brief Do inference with synchronous mode.
+
+        @param graph_name The specified graph name
+
+        void process(const std::string& graph_name);
+
+**21). process**
+    .. code-block:: c++
+
+        @brief Do inference with synchronous mode with provided input tensors
+
+        @param graph_name The specified graph name
+        @input_shapes     Shapes of all input tensors
+        @input_tensors    Data pointers of all input tensors in system meory
+
+        void process(
+            const std::string&                       graph_name,
+            std::map<std::string, std::vector<int>>& input_shapes,
+            std::map<std::string, Dtype*>&           input_tensors);
+
+**22). reset_input_tensors**
+    .. code-block:: c++
+
+        @brief Reset data pointers of input tensors in system memory.
+
+        @param graph_name    The specified graph name
+        @param input_shapes  Shapes of all input tensors
+        @param input_tensors Data pointers in system meory for all input tensors
+
+        void reset_input_tensors(
+            const std::string&                       graph_name,
+            std::map<std::string, std::vector<int>>& input_shapes,
+            std::map<std::string, Dtype*>&           input_tensors);
+
+Bmdnn
+_____
+
+**1). Bmdnn 构造函数**
+    .. code-block:: c++
+      
+       @brief Constructor.
+
+       explicit Bmdnn(Handle handle);
+
+**2). sigmoid**
+    .. code-block:: c++
+
+        @brief Sigmoid operation.
+
+        @param input  Input tensor
+        @param output Output tensor
+        @return 0 for success and other for failure
+
+        int sigmoid(Tensor<float>& input, Tensor<float>& output);
+
+**3). tanh**
+    .. code-block:: c++
+
+        @brief Tanh operation.
+
+        @param input  Input tensor
+        @param output Output tensor
+        @return 0 for success and other for failure
+
+        int tanh(Tensor<float>& input, Tensor<float>& output);
+
+**4). softmax**
+    .. code-block:: c++
+
+        @brief Softmax operation.
+
+        @param input  Input tensor
+        @param output Output tensor
+        @return 0 for success and other for failure
+
+        int softmax(Tensor<float>& input, Tensor<float>& output);
+
+**5). relu**
+    .. code-block:: c++
+
+        @brief Relu operation.
+
+        @param input          Input tensor
+        @param negative_slope Factor of negative slope used to scale the points
+                              below 0
+        @param output         Output tensor
+        @return 0 for success and other for failure
+
+        int relu(Tensor<float>& input, float negative_slope, Tensor<float>& output);
+
+**6). matmul**
+    .. code-block:: c++
+
+        @brief Matrix multiplication plus bias.
+
+        @param input  Input tensor
+        @param weight Weight tensor
+        @param weight Bias tensor
+        @param output Output tensor
+        @return 0 for success and other for failure
+
+        int matmul(
+            Tensor<float>& input,
+            Tensor<float>& weight,
+            Tensor<float>& bias,
+            Tensor<float>& output);
+
+**7). add**
+    .. code-block:: c++
+
+        @brief Addition operation, output = input_a + input_b
+
+        @param input  Input tensor A
+        @param weight Input tensor B
+        @param output Output tensor
+        @return 0 for success and other for failure
+
+        int add(
+            Tensor<float>& input_a,
+            Tensor<float>& input_b,
+            Tensor<float>& output);
+
+**8). sub**
+    .. code-block:: c++
+
+        @brief Subtraction operation, output = input_a - input_b
+
+        @param input  Input tensor A
+        @param weight Input tensor B
+        @param output Output tensor
+        @return 0 for success and other for failure
+
+        int sub(
+            Tensor<float>& input_a,
+            Tensor<float>& input_b,
+            Tensor<float>& output);
+
+**9). mul**
+    .. code-block:: c++
+
+        @brief Multiplication operation, output = input_a * input_b
+
+        @param input  Input tensor A
+        @param weight Input tensor B
+        @param output Output tensor
+        @return 0 for success and other for failure
+
+        int mul(
+            Tensor<float>& input_a,
+            Tensor<float>& input_b,
+            Tensor<float>& output);
+
+**10). div**
+    .. code-block:: c++
+
+       @brief Division operation, output = input_a / input_b
+
+       @param input  Input tensor A
+       @param weight Input tensor B
+       @param output Output tensor
+       @return 0 for success and other for failure
+
+       int div(
+           Tensor<float>& input_a,
+           Tensor<float>& input_b,
+           Tensor<float>& output);
+
+Bmcv
+____
+
+**1). Bmcv 构造函数**
+    .. code-block:: c++
+
+        @brief Constructor.
+
+        @param handle A Handle instance
+
+        Bmcv(Handle handle);
+
+**2). resize**
+    .. code-block:: c++
+
+        @brief Resize an image with interpolation of INTER_NEAREST.
+
+        @param input  Input image
+        @param output Output image
+        @return 0 for success and other for failure
+
+        int resize(
+            Tensor<float>&             input,
+            Tensor<float>&             output);
+
+**3). crop**
+    .. code-block:: c++
+
+        @brief Crop an image.
+
+        @param input  Input image
+        @param output Output image
+        @param top    Start point most top from original image
+        @param left   Start point most left from original image
+        @return 0 for success and other for failure
+
+        int crop(
+            Tensor<float>&             input,
+            Tensor<float>&             output,
+            int                        top,
+            int                        left);
+
+**4). yuv2bgr**
+    .. code-block:: c++
+
+        @brief Convert an image from YUV to BGR.
+
+        @param input_y  Data of channel Y
+        @param input_uv Data of Channel UV
+        @param ouput    Data of BGR
+        @return 0 for success and other for failure
+
+        int yuv2bgr(
+            Tensor<float>&             input_y,
+            Tensor<float>&             input_uv,
+            Tensor<float>&             output);
+
+**5). crop_resize_norm**
+    .. code-block:: c++
+
+        @brief Resize an image, crop it and do normalizition.
+
+        @param input       Input image
+        @param output      Output image
+        @param top         Start point most top from original image
+        @param left        Start point most left from original image
+        @param crop_height Crop image height
+        @param crop_width  Crop image width
+        @param scale_b     Scale factor for channel b
+        @param bias_b      Bias for channel b
+        @param scale_g     Scale factor for channel g
+        @param bias_g      Bias for channel g
+        @param scale_r     Scale factor for channel r
+        @param bias_r      Bias for channel r
+        @return 0 for success and other for failure
+
+        int crop_resize_norm(
+            Tensor<float>&             input,
+            Tensor<float>&             output,
+            int                        top,
+            int                        left,
+            int                        crop_height,
+            int                        crop_width,
+            float                      scale_b,
+            float                      bias_b,
+            float                      scale_g,
+            float                      bias_g,
+            float                      scale_r,
+            float                      bias_r);
+
+**6). resize_norm**
+    .. code-block:: c++
+
+        @brief Resize an image and do normalizition.
+
+        @param input   Input image
+        @param output  Output image
+        @param scale_b Scale factor for channel b
+        @param bias_b  Bias for channel b
+        @param scale_g Scale factor for channel g
+        @param bias_g  Bias for channel g
+        @param scale_r Scale factor for channel r
+        @param bias_r  Bias for channel r
+        @return 0 for success and other for failure
+
+        int resize_norm(
+            Tensor<float>&             input,
+            Tensor<float>&             output,
+            float                      scale_b,
+            float                      bias_b,
+            float                      scale_g,
+            float                      bias_g,
+            float                      scale_r,
+            float                      bias_r);
+
+**7). transpose**
+    .. code-block:: c++
+
+        @brief Transpose an image.
+
+        @param input  Input image
+        @param output Output image
+        @return 0 for success and other for failure
+
+        int transpose(
+            Tensor<float>&             input,
+            Tensor<float>&             output);
+
+**8). bgrsplit**
+    .. code-block:: c++
+
+        @brief Convert packed BGR image data to BGR planar data format..
+
+        @param input  Input image
+        @param output Output image
+        @return 0 for success and other for failure
+
+        int bgrsplit(
+            Tensor<float>&             input,
+            Tensor<float>&             output);
